@@ -34,3 +34,6 @@ Esta es una API REST desarrollada en Laravel que permite realizar operaciones CR
 - php artisan migrate
 - php artisan serve
 
+4. **Documentacion**
+- http://127.0.0.1:8000/api/documentation
+
