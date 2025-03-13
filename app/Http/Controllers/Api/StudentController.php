@@ -1,16 +1,41 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Info(
+ *     title="API de Estudiantes",
+ *     version="1.0",
+ *     description="Documentación de la API para gestionar estudiantes",
+ *     @OA\Contact(
+ *         email="soporte@tuapi.com"
+ *     )
+ * )
+ */
 class StudentController extends Controller
 {
-
-    //Metodo para obtener todos los estudiantes 
+    /**
+     * @OA\Get(
+     *     path="/api/students",
+     *     summary="Obtiene la lista de todos los estudiantes",
+     *     tags={"Estudiantes"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de estudiantes obtenida exitosamente"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No se encontraron estudiantes"
+     *     )
+     * )
+     */
     public function getAllStudents()
     {
         $estudiante = Student::all();
@@ -29,8 +54,32 @@ class StudentController extends Controller
         ];
         return response()->json($data, 200);
     }
- 
-    //Metodo registrar un estudiante en la base de datos 
+
+    /**
+     * @OA\Post(
+     *     path="/api/students",
+     *     summary="Registra un nuevo estudiante",
+     *     tags={"Estudiantes"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "phone", "language"},
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="email", type="string"),
+     *             @OA\Property(property="phone", type="string"),
+     *             @OA\Property(property="language", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Estudiante creado exitosamente"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en la validación de datos"
+     *     )
+     * )
+     */
     public function createStudent(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -73,6 +122,41 @@ class StudentController extends Controller
         return response()->json($data, 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/students/{id}",
+     *     summary="Obtener un estudiante por ID",
+     *     tags={"Estudiantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del estudiante",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estudiante obtenido exitosamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante obtenido exitosamente"),
+     *             @OA\Property(property="estado", type="boolean", example=true),
+     *             @OA\Property(property="estudiante", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Estudiante no encontrado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante no encontrado"),
+     *             @OA\Property(property="estado", type="boolean", example=false),
+     *             @OA\Property(property="error", type="integer", example=404)
+     *         )
+     *     )
+     * )
+     */
+
     //metodo para obtener un estudiante mediante su id
     public function getStudentById($id)
     {
@@ -93,6 +177,50 @@ class StudentController extends Controller
         return response()->json($data, 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/students/{id}",
+     *     summary="Eliminar un estudiante por ID",
+     *     tags={"Estudiantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del estudiante",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estudiante eliminado exitosamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante eliminado exitosamente"),
+     *             @OA\Property(property="estado", type="boolean", example=true),
+     *             @OA\Property(property="estudiante", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Estudiante no encontrado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante no encontrado"),
+     *             @OA\Property(property="estado", type="boolean", example=false),
+     *             @OA\Property(property="error", type="integer", example=404)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al eliminar el estudiante",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Error al eliminar el estudiante"),
+     *             @OA\Property(property="estado", type="boolean", example=false),
+     *             @OA\Property(property="error", type="integer", example=500)
+     *         )
+     *     )
+     * )
+     */
     //metodo para eliminar un estudiante mediante su id
     public function deleteStudent($id)
     {
@@ -120,6 +248,61 @@ class StudentController extends Controller
         ];
         return response()->json($data, 200);
     }
+
+    /**
+     * @OA\Put(
+     *     path="/api/students/{id}",
+     *     summary="Actualizar todos los campos de un estudiante",
+     *     tags={"Estudiantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del estudiante",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "phone", "language"},
+     *             @OA\Property(property="name", type="string", example="Maria Chavez"),
+     *             @OA\Property(property="email", type="string", format="email", example="Maria@example.com"),
+     *             @OA\Property(property="phone", type="string", example="1234567890"),
+     *             @OA\Property(property="language", type="string", example="Español")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estudiante actualizado exitosamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante actualizado exitosamente"),
+     *             @OA\Property(property="estado", type="boolean", example=true),
+     *             @OA\Property(property="estudiante", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en la validación de datos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Error en la validación de datos"),
+     *             @OA\Property(property="estado", type="boolean", example=false),
+     *             @OA\Property(property="error", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Estudiante no encontrado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante no encontrado"),
+     *             @OA\Property(property="estado", type="boolean", example=false),
+     *             @OA\Property(property="error", type="integer", example=404)
+     *         )
+     *     )
+     * )
+     */
 
     //metodo para actualizar TODOS los campos de un estudiante
     public function updateStudent(Request $request, $id)
@@ -161,6 +344,60 @@ class StudentController extends Controller
         return response()->json($data, 200);
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/api/students/{id}",
+     *     summary="Actualizar parcialmente los campos de un estudiante",
+     *     tags={"Estudiantes"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del estudiante",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Maria Chavez"),
+     *             @OA\Property(property="email", type="string", format="email", example="Maria@example.com"),
+     *             @OA\Property(property="phone", type="string", example="1234567890"),
+     *             @OA\Property(property="language", type="string", example="Español")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estudiante actualizado exitosamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante actualizado exitosamente"),
+     *             @OA\Property(property="estado", type="boolean", example=true),
+     *             @OA\Property(property="estudiante", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en la validación de datos o no se enviaron datos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Error en la validación de datos"),
+     *             @OA\Property(property="estado", type="boolean", example=false),
+     *             @OA\Property(property="error", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Estudiante no encontrado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Estudiante no encontrado"),
+     *             @OA\Property(property="estado", type="boolean", example=false),
+     *             @OA\Property(property="error", type="integer", example=404)
+     *         )
+     *     )
+     * )
+     */
+
     //metodo para actualizar PARCIALMENTE los campos de un estudiante
     public function updateStudentPartially(Request $request, $id)
     {
@@ -183,9 +420,9 @@ class StudentController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'max:255',
-            'email' => "email|unique:students,email,$id",
+            'email' => "email",
             'phone' => 'digits:10',
-            'language' => 'nullable'
+            'language' => ''
         ]);
 
         if ($validator->fails()) {
