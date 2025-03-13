@@ -31,6 +31,6 @@ Esta es una API REST desarrollada en Laravel que permite realizar operaciones CR
    composer install
 
 3.**USO**
-php artisan migrate
-php artisan serve
+- php artisan migrate
+- php artisan serve
 
