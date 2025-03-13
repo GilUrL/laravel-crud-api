@@ -28,7 +28,7 @@ Esta es una API REST desarrollada en Laravel que permite realizar operaciones CR
 
 1. Clona el repositorio en tu máquina local
 2. Instalar composer
-   composer install
+- composer install
 
 3.**USO**
 - php artisan migrate
